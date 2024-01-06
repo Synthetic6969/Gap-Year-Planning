@@ -1,11 +1,20 @@
+const country = window.location.href.split('/')[window.location.href.split('/').length - 2].replace(/-/g, ' ');
+
+const mapCenters = {
+    Netherlands: {
+        zoom: 13,
+        center: { lat: 52.3730357, lng: 4.8932469 }
+    }
+}
+
 async function initMap() {
     const { Map } = await google.maps.importLibrary("maps");
     const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
 
     const map = new Map(document.getElementById("map"), {
         mapId: "99b8730fe823e746",
-        zoom: 13,
-        center: { lat: 52.3730357, lng: 4.8932469 },
+        zoom: mapCenters[country]?.zoom || 4.45,
+        center: mapCenters[country]?.center || { lat: 49.2492459, lng: 14.303387 },
     });
 
     const places = await (await fetch('../places.json')).json()
@@ -13,7 +22,7 @@ async function initMap() {
 
     // Add marker for each place
     for (const place of places) {
-        if (place.country != window.location.href.split('/')[window.location.href.split('/').length - 2].replace(/-/g, ' ')) continue;
+        if ((place.country != country) && (mapCenters[country] != undefined)) continue;
         const marker =
             new AdvancedMarkerElement({
                 map,
