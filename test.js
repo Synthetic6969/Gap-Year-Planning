@@ -1,4 +1,4 @@
-import { places } from './places';
+import { places } from './places.js';
 console.log(places)
 
 async function initMap() {
