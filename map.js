@@ -17,29 +17,35 @@ async function initMap() {
         center: mapCenters[country]?.center || { lat: 49.2492459, lng: 14.303387 },
     });
 
-    const places = await (await fetch('../places.json')).json()
-    console.log(places)
+    // Show pins for each individual country
+    if (mapCenters[country] != undefined) {
+        const places = await (await fetch('../places.json')).json()
+        console.log(places)
 
-    // Add marker for each place
-    for (const place of places) {
-        if ((place.country != country) && (mapCenters[country] != undefined)) continue;
-        const marker =
-            new AdvancedMarkerElement({
-                map,
-                content: buildContent(place),
-                position: place.coordinates,
-                title: place.name,
+        // Add marker for each place
+        for (const place of places) {
+            if ((place.country != country) && (mapCenters[country] != undefined)) continue;
+            const marker =
+                new AdvancedMarkerElement({
+                    map,
+                    content: buildContent(place),
+                    position: place.coordinates,
+                    title: place.name,
+                });
+
+            marker.addListener("click", () => {
+                if (marker.content.classList.contains("highlight")) {
+                    marker.content.classList.remove("highlight");
+                    marker.zIndex = null;
+                } else {
+                    marker.content.classList.add("highlight");
+                    marker.zIndex = 1;
+                }
             });
-
-        marker.addListener("click", () => {
-            if (marker.content.classList.contains("highlight")) {
-                marker.content.classList.remove("highlight");
-                marker.zIndex = null;
-            } else {
-                marker.content.classList.add("highlight");
-                marker.zIndex = 1;
-            }
-        });
+        }
+    } else {
+        // Otherwise, show an overview of the trip
+        
     }
 }
 
